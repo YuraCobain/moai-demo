@@ -1,15 +1,17 @@
-module("ResourceDefinitions", package.seeall)
+local _M = {}
 
 local definitions = {}
 
-function ResourceDefinitions:set(name, definition)
+function _M:set(name, definition)
   definitions[name] = definition
 end
 
-function ResourceDefinitions:get(name)
+function _M:get(name)
   return definitions[name]
 end
 
-function ResourceDefinitions:remove(name)
+function _M:remove(name)
   definitions[name] = nil
 end
+
+return _M

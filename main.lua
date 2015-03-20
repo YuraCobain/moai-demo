@@ -1,4 +1,4 @@
-local Game = require('game').start()
+local Game = require('game')
 local worldResolutionX = 320
 local worldResolutionY = 480
 
@@ -8,22 +8,25 @@ local scaleY = 1
 local screenResolutionX = scaleX * worldResolutionX
 local screenResolutionY = scaleY * worldResolutionY
 
-RESOURCE_TYPE_IMAGE = 0
-RESOURCE_TYPE_TILED_IMAGE = 1
-RESOURCE_TYPE_FONT = 3
-RESOURCE_TYPE_SOUND = 4
-
 MOAISim.openWindow("Concentration",  screenResolutionX, screenResolutionY)
 
 local viewport = MOAIViewport.new()
 viewport:setSize(screenResolutionX, screenResolutionY)
 viewport:setScale(worldResolutionX, worldResolutionY)
 
-function mainLoop()
-  Game.initialize(viewport)
-  print('started')
-end
+--[[local layer = MOAILayer2D.new()
+layer:setViewport(viewport)
+MOAISim.pushRenderPass(layer)
 
+local logo = MOAIGfxQuad2D.new()
+logo:setTexture('assets/logo.png')
+logo:setRect(-30, -30, 30, 30)
 
-gameThread = MOAICoroutine.new()
-gameThread:run(mainLoop)
+local base = MOAIProp2D.new()
+base:setDeck(logo)
+base:setLoc(0, 0)
+
+layer:insertProp(base)--]]
+
+game = Game.new()
+game:initialize(viewport)

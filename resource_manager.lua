@@ -1,45 +1,41 @@
-module("ResourceManager", package.seeall)
+local _M = {}
+local ResourseDefinitions = require('resource_definitions')
+
+_M.RESOURCE_TYPE_IMAGE = 0
+_M.RESOURCE_TYPE_TILED_IMAGE = 1
+_M.RESOURCE_TYPE_FONT = 3
+_M.RESOURCE_TYPE_SOUND = 4
 
 ASSETS_PATH = 'assets/'
 
 local cache = {}
 
-function ResourceManager:get(name)
+function _M:get(name)
   if not self:loaded(name) then
     self:load(name)
   end
-  
   return cache[name]
 end
 
-function ResourceManager:loaded(name)
+function _M:loaded(name)
   return cache[name] ~= nil  
 end
 
-function ResourceManager:loadGfxQuad2D(filePath, coords)
-  local image = MOAIGfxQuad2D.new()
+function _M:loadImage(definition)
+  local image
+  local filePath = ASSETS_PATH .. definition.fileName
   
+  local halfWidth = definition.width / 2
+  local halfHeight = definition.height / 2
+  
+  image = MOAIGfxQuad2D.new()
   image:setTexture(filePath)
-  image:setRect(unpack(coords))
+  image:setRect(-halfWidth, -halfHeight, halfWidth, halfHeight)
   
   return image
 end
 
-function ResourceManager:loadImage(definition)
-  local image
-  local filePath = ASSETS_PATH .. definition.fileName
-  
-  if definition.coords then
-    image = self:loadGfxQuad2D(filePath, definition.coords)
-  else
-    local halfWidth = definition.width / 2
-    local halfHeight = definition.height / 2
-    image = self:loadGfxQuad2D(filePath, {-halfWidth, -halfHeight,
-      halfWidth, halfHeight})
-  end
-end
-
-function ResourceManager:loadTiledImage(definition)
+function _M:loadTiledImage(definition)
   local tiledImage = MOAITileDeck2D.new()
   local filePath = ASSETS_PATH .. definition.fileName
    
@@ -49,7 +45,7 @@ function ResourceManager:loadTiledImage(definition)
   return tiledImage
 end
 
-function ResourceManager:loadFont(definition)
+function _M:loadFont(definition)
   local font = MOAIFont.new()
   local filePath = ASSETS_PATH .. definition.fileName
   
@@ -59,7 +55,7 @@ function ResourceManager:loadFont(definition)
   return font
 end
 
-function ResourceManager:loadSound(definition)
+function _M:loadSound(definition)
   local sound = MOAIUntzSound.new()
   local filePath = ASSETS_PATH .. definition.fileName
   
@@ -70,29 +66,29 @@ function ResourceManager:loadSound(definition)
   return sound
 end
 
-function ResourceManager:load(name)
-  local resourceDefinition = ResourceDefinitions:get(name)
+function _M:load(name)
+  local resourceDefinition = ResourseDefinitions:get(name)
   
   if not resourceDefinition then
     print("ERROR: Missing resource definition for " .. name)
   else
     local resource
     
-    if resourceDefinition.type == RESOURCE_TYPE_IMAGE then
+    if resourceDefinition.type == _M.RESOURCE_TYPE_IMAGE then
       resource = self:loadImage(resourceDefinition)
-    elseif resourceDefinition.type == RESOURCE_TYPE_TILED_IMAGE then
+    elseif resourceDefinition.type == _M.RESOURCE_TYPE_TILED_IMAGE then
       resource = self:loadTiledImage(resourceDefinition)
-    elseif resourceDefinition == RESOURCE_TYPE_FONT then
+    elseif resourceDefinition == _M.RESOURCE_TYPE_FONT then
       resource = self:loadFont(resourceDefinition)
-    elseif resourceDefinition:RESOURCE_TYPE_SOUND then
+    elseif resourceDefinition == _M.RESOURCE_TYPE_SOUND then
       resource = self:loadSound(resourceDefinition)
     end 
     
     cache[name] = resource
   end
-  
 end  
-    
+  
+return _M
     
     
     
