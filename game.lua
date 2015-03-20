@@ -34,11 +34,11 @@ local resource_definitions = {
     function game:initialize(viewport)
       self.layer = MOAILayer2D.new()
       self.layer:setViewport(viewport)
+      MOAISim.pushRenderPass(self.layer)
       
-      MOAISim.pushRenderPass(layer)
-            
       resource_definitions_load(resource_definitions)
       self:logo_load()
+      
     end
     
     return game
